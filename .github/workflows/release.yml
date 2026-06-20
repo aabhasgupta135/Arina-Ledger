@@ -7,6 +7,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-executables:
     name: Build on ${{ matrix.os }}
@@ -39,3 +42,30 @@ jobs:
           path: |
             dist-electron/*.exe
             dist-electron/*.dmg
+
+  create-release:
+    name: Publish GitHub Release
+    needs: build-executables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ArinaLedger-windows-latest
+          path: release-assets
+          
+      - name: Download Mac Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ArinaLedger-macos-latest
+          path: release-assets
+
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Arina Ledger (Latest Version)
+          body: "Download the latest version of Arina Ledger for Windows (.exe) and Mac (.dmg) below."
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
