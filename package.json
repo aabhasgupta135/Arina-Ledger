@@ -2,6 +2,8 @@
   "name": "accounting-app",
   "private": true,
   "version": "0.0.0",
+  "description": "A premium, offline-first financial accounting desktop application.",
+  "author": "Arina Ledger",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
