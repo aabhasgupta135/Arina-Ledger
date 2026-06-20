@@ -81,7 +81,7 @@ export default function Welcome({ records, onCreateRecord, onSelectRecord, onImp
     <div className="animate-fade-in" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
       <div style={{ maxWidth: '600px', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <img src="/icon.png" alt="Arina Ledger Logo" style={{ width: '80px', height: '80px', marginBottom: '16px', borderRadius: '16px' }} />
+          <img src="./icon.png" alt="Arina Ledger Logo" style={{ width: '80px', height: '80px', marginBottom: '16px', borderRadius: '16px' }} />
           <h1 style={{ fontSize: '32px', color: 'var(--primary)', marginBottom: '8px' }}>Arina Ledger</h1>
           <p>Select an existing ledger, import a shared one, or create a new one.</p>
         </div>
