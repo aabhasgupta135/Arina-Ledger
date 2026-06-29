@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ArrowLeft, Plus, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import { getEntryBalances } from '../lib/storage';
 
@@ -10,8 +10,11 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
 
   const { netCash, netCredit } = getEntryBalances(entry);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const amountRef = useRef(null);
+  const categoryRef = useRef(null);
+  const descRef = useRef(null);
+
+  const saveTransaction = () => {
     if (!amount || isNaN(amount) || Number(amount) <= 0) return;
     
     onSaveTransaction(date, {
@@ -24,6 +27,11 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
     setAmount('');
     setDescription('');
     // keep category and type same for quick entry
+    
+    // Auto-focus amount for the next rapid entry
+    setTimeout(() => {
+      amountRef.current?.focus();
+    }, 0);
   };
 
   const formatCurrency = (amount) => {
@@ -79,13 +87,14 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
           <h3 style={{ fontSize: '18px', marginBottom: '20px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
             Add Transaction
           </h3>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <div className="input-group">
               <label className="input-label">Transaction Type</label>
               <select 
                 className="input-field" 
                 value={txType} 
                 onChange={(e) => setTxType(e.target.value)}
+                onKeyUp={(e) => e.key === 'Enter' && amountRef.current?.focus()}
                 style={{ padding: '10px' }}
               >
                 <optgroup label="Cash">
@@ -102,11 +111,13 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
             <div className="input-group">
               <label className="input-label">Amount (₹)</label>
               <input 
+                ref={amountRef}
                 type="number" 
                 className="input-field" 
                 placeholder="0.00" 
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
+                onKeyUp={(e) => e.key === 'Enter' && categoryRef.current?.focus()}
                 required
                 min="0"
                 step="0.01"
@@ -116,11 +127,13 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
             <div className="input-group">
               <label className="input-label">Category</label>
               <input 
+                ref={categoryRef}
                 type="text" 
                 className="input-field" 
                 placeholder={txType.includes('CASH') ? "e.g. OPD, Lab, Xray, Physiotherapy, Bank Transaction" : "e.g. IPD, Bank Transfer"} 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                onKeyUp={(e) => e.key === 'Enter' && descRef.current?.focus()}
                 list="category-suggestions"
               />
               <datalist id="category-suggestions">
@@ -136,15 +149,17 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
             <div className="input-group">
               <label className="input-label">Description / Remarks (Optional)</label>
               <input 
+                ref={descRef}
                 type="text" 
                 className="input-field" 
                 placeholder="Brief details..." 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                onKeyUp={(e) => e.key === 'Enter' && saveTransaction()}
               />
             </div>
 
-            <button type="submit" className="btn btn-primary w-full mt-4" style={{ width: '100%', padding: '12px' }}>
+            <button type="button" onClick={saveTransaction} className="btn btn-primary w-full mt-4" style={{ width: '100%', padding: '12px' }}>
               <Plus size={18} /> Add Entry
             </button>
           </form>
