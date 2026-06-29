@@ -26,7 +26,8 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
 
     setAmount('');
     setDescription('');
-    // keep category and type same for quick entry
+    setCategory('');
+    // keep type same for quick entry
     
     // Auto-focus amount for the next rapid entry
     setTimeout(() => {
@@ -94,7 +95,12 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
                 className="input-field" 
                 value={txType} 
                 onChange={(e) => setTxType(e.target.value)}
-                onKeyUp={(e) => e.key === 'Enter' && amountRef.current?.focus()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    amountRef.current?.focus();
+                  }
+                }}
                 style={{ padding: '10px' }}
               >
                 <optgroup label="Cash">
@@ -117,7 +123,12 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
                 placeholder="0.00" 
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                onKeyUp={(e) => e.key === 'Enter' && categoryRef.current?.focus()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    categoryRef.current?.focus();
+                  }
+                }}
                 required
                 min="0"
                 step="0.01"
@@ -133,7 +144,13 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
                 placeholder={txType.includes('CASH') ? "e.g. OPD, Lab, Xray, Physiotherapy, Bank Transaction" : "e.g. IPD, Bank Transfer"} 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                onKeyUp={(e) => e.key === 'Enter' && descRef.current?.focus()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    // We DO NOT preventDefault here, so the native datalist option can be selected.
+                    // Instead, we use a tiny timeout to move focus AFTER the selection registers.
+                    setTimeout(() => descRef.current?.focus(), 10);
+                  }
+                }}
                 list="category-suggestions"
               />
               <datalist id="category-suggestions">
@@ -155,7 +172,12 @@ export default function DailyDetails({ record, date, entry, onSaveTransaction, o
                 placeholder="Brief details..." 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                onKeyUp={(e) => e.key === 'Enter' && saveTransaction()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveTransaction();
+                  }
+                }}
               />
             </div>
 
